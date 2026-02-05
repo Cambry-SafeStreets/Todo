@@ -1,10 +1,13 @@
-import { pgTable, serial, varchar, text, integer } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, text, integer, boolean } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+import { db } from '.';
+import { seed } from 'drizzle-seed';
 
 export const Users = pgTable('users', {
     id: serial('id').primaryKey(),
     username: varchar( "username", { length: 15}).notNull(),
-    password: text('password').notNull()
+    password: text('password').notNull(),
+    isAdmin: boolean('isAdmin')
 })
 
 export const Todos = pgTable('todos', {
@@ -17,9 +20,19 @@ export const userRelations = relations( Users, ({many}) => ({
     todos: many(Todos)
 }))
 
-export const postRelations = relations(Todos, ({one}) => ({
+export const Relations = relations(Todos, ({one}) => ({
     author: one( Users, {
         fields: [Todos.userid],
         references: [Users.id],
     })
 }))
+
+//this seeding may or may not work
+//however I can see that the tables exist so idgaf
+async function seeding() {
+    console.log("Attempt seeding")
+    await seed(db, Users)
+    await seed(db, Todos)
+}
+
+seeding()
