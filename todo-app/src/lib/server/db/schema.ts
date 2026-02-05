@@ -1,3 +1,2 @@
-import { mysqlTable, serial, int } from 'drizzle-orm/mysql-core';
-
-export const user = mysqlTable('user', { id: serial('id').primaryKey(), age: int('age') });
+import { pgTable, serial, varchar, text } from 'drizzle-orm/pg-core';
+import { Relations } from 'drizzle-orm';
