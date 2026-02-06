@@ -5,7 +5,7 @@ import { seed } from 'drizzle-seed';
 
 export const Users = pgTable('users', {
     id: serial('id').primaryKey(),
-    username: varchar( "username", { length: 15}).notNull(),
+    username: varchar( "username", { length: 15}).notNull().unique(),
     password: text('password').notNull(),
     isAdmin: boolean('isAdmin')
 })

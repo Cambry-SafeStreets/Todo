@@ -18,7 +18,7 @@
 		<h1 class="text-white ">{title}</h1>
 	</div>
 
-	<div>
+	<div class="flex justify-center items-center mt-5">
 	{@render children()}
 	</div>
 

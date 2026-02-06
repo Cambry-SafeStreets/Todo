@@ -1,5 +1,6 @@
 import "process"
 import { drizzle } from "drizzle-orm/node-postgres"
+import { eq } from "drizzle-orm"
 import { Pool } from 'pg'
 import { Users } from "./schema"
 
@@ -20,13 +21,15 @@ export const db = drizzle(pool)
 export const createUser = async (username, password) => {
     //inserts a user and returns the new user object
     try{
-
+        //got the return to work with https://github.com/drizzle-team/drizzle-orm/issues/1237
         const [newUser] = await db.insert(Users).values({username: username, password: password, isAdmin: false}).returning()
         
         return newUser
 
     } catch (error) {
+
         console.log(error)
+        return "User with that Username already exists"
     }
 }
 
@@ -34,6 +37,16 @@ export const getUserById = async (userId) => {
     try{
         return await db.select().from(Users).where(eq(Users.id, userId))
     } catch (error){
+        console.log(error)
+        
+    }
+}
+
+export const getUserByUsername = async (username) => {
+    try {
+        const [user] = await db.select().from(Users).where(eq(Users.username, username))
+        return user
+    } catch (error) {
         console.log(error)
     }
 }

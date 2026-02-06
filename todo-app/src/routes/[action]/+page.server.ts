@@ -1,6 +1,7 @@
-import { createUser, db, getAllUsers, getUserById } from '$lib/server/db';
+import { createUser, db, getAllUsers, getUserById, getUserByUsername } from '$lib/server/db';
 import { Users } from '$lib/server/db/schema'
-import { redirect } from '@sveltejs/kit'
+import { redirect, fail } from '@sveltejs/kit'
+
 
 // load function to decide if signin | signup | or redirect to error page
 export async function load( { params, cookies }) {
@@ -9,43 +10,57 @@ export async function load( { params, cookies }) {
         redirect(308, '/')
     }
 
-    console.log(cookies.get('loggedInUser'))
-
     //if they are currently logged in
     if(cookies.get('loggedInUser') != undefined && cookies.get('loggedInUser') !== '0'){
         redirect(308, '/')
     }
 
     return {
+        pageFunction: params.action,
         meta: {
-            title: params.action == 'signin' ? 'Sign in' : 'Sign up'
+            title: params.action == 'signin' ? 'Sign In' : 'Sign Up'
         }
     }
 }
 
 
 export const actions = {
-    createUser: async ({ request, cookies }) => {
+    default: async ({ request, cookies }) => {
         const data = await request.formData();
         const username = data.get('username')
         const password = data.get('password')
+
+        if(data.get('pageFunction') == 'signup'){
+            if( username !== null && password !== null) {
+                const user = await createUser( username, password)
+                console.log(user)
+
+                if(user == "User with that Username already exists"){
+                    return fail(409, {error: "Username already exists" })
+                } else{
+                    const id = user?.id?.toString()
         
-        if( username !== null && password !== null) {
-            const user = await createUser( username, password)
+                    let idForCookie = '0'
+                    if (id) idForCookie = id
+                    cookies.set('loggedInUser', idForCookie , { path: '/'})
+                }
+
+            }
+        } else {
+            const user = await getUserByUsername(username)
             console.log(user)
-            const id = user?.id?.toString()
-            console.log(id)
 
-            let idForCookie = '0'
-            if (id) idForCookie = id
-            cookies.set('loggedInUser', idForCookie , { path: '/'})
+            if(user?.password == password){
+                    const id = user?.id?.toString()
+        
+                    let idForCookie = '0'
+                    if (id) idForCookie = id
+                    cookies.set('loggedInUser', idForCookie , { path: '/'})
+            } else {
+                return fail(401, {error: "Password is Incorrect"})
+            }
         }
-    },
-    login: async({}) => {
-        // function to check credentials with the ones in the database
-            // if correct redirect home
-            // else display message saying incorrect info
-
+        
     }
 }
 
