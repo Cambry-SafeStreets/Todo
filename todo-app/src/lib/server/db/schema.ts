@@ -26,3 +26,8 @@ export const Relations = relations(Todos, ({one}) => ({
         references: [Users.id],
     })
 }))
+
+export type User = typeof Users.$inferSelect;
+export type NewUser = typeof Users.$inferInsert;
+export type Todo = typeof Todos.$inferSelect;
+export type NewTodo = typeof Todos.$inferInsert;
