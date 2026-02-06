@@ -26,13 +26,3 @@ export const Relations = relations(Todos, ({one}) => ({
         references: [Users.id],
     })
 }))
-
-//this seeding may or may not work
-//however I can see that the tables exist so idgaf
-async function seeding() {
-    console.log("Attempt seeding")
-    await seed(db, Users)
-    await seed(db, Todos)
-}
-
-seeding()

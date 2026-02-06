@@ -1,22 +1,29 @@
 <script lang="ts">
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import { page } from '$app/stores'
 
 	let { children } = $props();
+
+	const { title } = $derived($page.data.meta)
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-<main class="flex flex-col bg-gray-400">
-	<div name="header" class="text-7xl font-mono">
-		<h1 class="">Banner will kinda go here</h1>
+<div class="flex flex-col h-screen max-h-screen bg-slate-800">
+	<!-- bg-[url('https://i.pinimg.com/736x/b4/09/ee/b409ee94ef48f517884709bc4f12eb93.jpg')] -->
+	<div class="text-6xl font-mono 
+		bg-slate-900
+		h-48 bg-no-repeat bg-cover
+		flex justify-center items-center" >
+		<h1 class="text-white ">{title}</h1>
 	</div>
 
 	<div>
 	{@render children()}
 	</div>
 
-	<div name="footer" class="fixed bottom-2 left-2 right-0 flex" >
-		<img class="max-h-8" src="https://www.safestreets.com/wp-content/uploads/2025/09/Safestreets-Google-Logo.png" alt="SafeStreets Logo">
-		<h1 class="text-2xl font-mono text-gray-400 ml-4">Cambry Practice</h1>
+	<div class="fixed bottom-2 left-2 right-0 flex" >
+		<img class="max-h-8 " src="https://www.safestreets.com/wp-content/uploads/2025/09/Safestreets-Google-Logo.png" alt="SafeStreets Logo">
+		<h1 class="text-2xl font-mono text-gray-600 ml-4">Cambry Practice</h1>
 	</div>
-</main>
+</div>
