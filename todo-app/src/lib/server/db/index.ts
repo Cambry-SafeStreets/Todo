@@ -1,6 +1,5 @@
 import "process"
 import { drizzle } from "drizzle-orm/node-postgres"
-import { eq } from "drizzle-orm"
 import { Pool } from 'pg'
 import { Users } from "./schema"
 
@@ -18,10 +17,14 @@ const pool = new Pool({
 export const db = drizzle(pool)
 
 //USERS
-export const createUser = async (username: string, password: string) => {
+export const createUser = async (username, password) => {
     //inserts a user and returns the new user object
     try{
-        return await db.insert(Users).values({username: username, password: password, isAdmin: false}).returning()
+
+        const [newUser] = await db.insert(Users).values({username: username, password: password, isAdmin: false}).returning()
+        
+        return newUser
+
     } catch (error) {
         console.log(error)
     }

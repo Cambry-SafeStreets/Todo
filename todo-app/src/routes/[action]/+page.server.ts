@@ -9,6 +9,13 @@ export async function load( { params, cookies }) {
         redirect(308, '/')
     }
 
+    console.log(cookies.get('loggedInUser'))
+
+    //if they are currently logged in
+    if(cookies.get('loggedInUser') != undefined && cookies.get('loggedInUser') !== '0'){
+        redirect(308, '/')
+    }
+
     return {
         meta: {
             title: params.action == 'signin' ? 'Sign in' : 'Sign up'
@@ -18,11 +25,21 @@ export async function load( { params, cookies }) {
 
 
 export const actions = {
-    createUser: async ({ request }) => {
+    createUser: async ({ request, cookies }) => {
         const data = await request.formData();
         const username = data.get('username')
         const password = data.get('password')
-        const user = await createUser( username, password)
+        
+        if( username !== null && password !== null) {
+            const user = await createUser( username, password)
+            console.log(user)
+            const id = user?.id?.toString()
+            console.log(id)
+
+            let idForCookie = '0'
+            if (id) idForCookie = id
+            cookies.set('loggedInUser', idForCookie , { path: '/'})
+        }
     },
     login: async({}) => {
         // function to check credentials with the ones in the database
