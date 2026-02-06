@@ -5,7 +5,9 @@ services:
     ports:
       - 5432:5432
     environment:
+      POSTGRES_USER: user
       POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: tododb
     volumes:
       - postgresdata:/var/lib/postgres
 volumes:
